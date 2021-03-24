@@ -632,7 +632,7 @@ Public Class Procesos
         Try
             Conexiones.Connect_SQLHANA(oDBSAP, "HANA", oLog)
             'campo val_pag
-            sSQL = " SELECT ""EXO_USUARIO"" FROM ""SOL_AUTORIZ"".""EXO_USUARIOS"" " 'tambien puedes sacar el campo exo_valpag
+            sSQL = " SELECT ""EXO_USUARIO"" FROM ""SOL_AUTORIZ"".""EXO_CREADORES"" " 'tambien puedes sacar el campo exo_valpag
             odtUsuarios = New System.Data.DataTable
             Conexiones.FillDtDB(oDBSAP, odtUsuarios, sSQL)
             If odtUsuarios.Rows.Count > 0 Then
@@ -647,6 +647,7 @@ Public Class Procesos
 
                         For Each dr As DataRow In odtDatos.Rows
                             sSQLAUTPDTE = "SELECT * FROM (" ': ESprimero = True
+
 #Region "Creamos SQL para recorrer y envial mail"
 
                             sBBDD = dr.Item("EXO_BD").ToString
@@ -655,16 +656,19 @@ Public Class Procesos
                             sSQLAUTPDTE &= " select trim(substring(T5.""AliasName"", 0, 50)) ""BD"",  " +
                               " CASE WHEN T0.""ObjType"" = 22 then 'Pedido' else 'Factura' end ""Tipo"", " +
                               " Case WHEN t0.""ProcesStat"" = 'Y' THEN 'Aprobado'  else 'Rechazado' end ""Estado"",  " +
-                               " t1.""Remarks"", t4.""DocTotal"" ""Total Documento"",  t4.""NumAtCard"" ""Referencia"",  t4.""CardName"", t4.""Project"",T4.""DocCur"" " +
+                               " t1.""Remarks"",   Case  When  T4.""DocTotalFC""<> 0 Then CAST((T4.""DocTotalFC"" - T4.""TotalExpFC"" - T4.""VatSumFC"") As Decimal(10,2)) " +
+                                    " Else     CAST((T4.""DocTotal"" - T4.""TotalExpns"" - T4.""VatSum"") As Decimal(10,2)) " +
+                                    " End ""Total Documento""," +
+                               "  t4.""NumAtCard"" ""Referencia"",  t4.""CardName"", t4.""Project"",T4.""DocCur"" " +
                               " from """ + sBBDD + """.""OWDD"" t0  " +
-                                  " inner Join """ + sBBDD + """.""WDD1"" T1 ON T0.""WddCode"" = T1.""WddCode"" And t0.""CurrStep"" = t1.""StepCode""  " +
-                                  " inner join """ + sBBDD + """.""OWST"" T2 ON T1.""StepCode"" = t2.""WstCode""  " +
-                                "  inner Join """ + sBBDD + """.""OUSR"" T3 ON T0.""UserSign"" = t3.""USERID""  " +
-                                  " inner join """ + sBBDD + """.""ODRF"" T4 ON T0.""DraftEntry"" = t4.""DocEntry"" " +
+                                  " inner Join """ + sBBDD + """.""WDD1"" T1 On T0.""WddCode"" = T1.""WddCode"" And t0.""CurrStep"" = t1.""StepCode""  " +
+                                  " inner join """ + sBBDD + """.""OWST"" T2 On T1.""StepCode"" = t2.""WstCode""  " +
+                                "  inner Join """ + sBBDD + """.""OUSR"" T3 On T0.""UserSign"" = t3.""USERID""  " +
+                                  " inner join """ + sBBDD + """.""ODRF"" T4 On T0.""DraftEntry"" = t4.""DocEntry"" " +
                                 "  inner Join """ + sBBDD + """.""OUDP"" T6 On T3.""Department"" = T6.""Code""  , " +
                                 "             """ + sBBDD + """.""OADM"" T5 " +
-                              " WHERE((t0.""Status"" = 'N' ) or(t0.""Status"" = 'Y' AND t0.""ProcesStat"" = 'Y'))   " ' +
-                            ' " And T1.""UpdateDate""= TO_DATE('20210312', 'YYYYMMDD') and T3.""USER_CODE"" ='" + sUsuario + "' "
+                              " WHERE((t0.""Status"" = 'N' ) or(t0.""Status"" = 'Y' AND t0.""ProcesStat"" = 'Y'))   " +
+                              " And T1.""UpdateDate""= CURRENT_DATE and T3.""USER_CODE"" ='" + sUsuario + "' "
 
 #End Region
                             sSQLAUTPDTE &= ") T ORDER BY T.""Tipo"""
@@ -724,7 +728,7 @@ Public Class Procesos
 
                 correo.From = New System.Net.Mail.MailAddress(sMailFROM, "Envío Aut. Autorizaciones Pdtes.")
                 correo.To.Clear()
-                sDirmail = Conexiones.GetValueDB(oDBSAP, """SOL_AUTORIZ"".""EXO_USUARIOS""", """EXO_MAIL""", """EXO_USUARIO""='" & sUsuario & "' ")
+                sDirmail = Conexiones.GetValueDB(oDBSAP, """SOL_AUTORIZ"".""EXO_CREADORES""", """EXO_MAIL""", """EXO_USUARIO""='" & sUsuario & "' ")
 
                 If sDirmail <> "" Then
                     correo.To.Add(sDirmail)
