@@ -668,7 +668,7 @@ Public Class Procesos
                                 "  inner Join """ + sBBDD + """.""OUDP"" T6 On T3.""Department"" = T6.""Code""  , " +
                                 "             """ + sBBDD + """.""OADM"" T5 " +
                               " WHERE((t0.""Status"" = 'N' ) or(t0.""Status"" = 'Y' AND t0.""ProcesStat"" = 'Y'))   " +
-                              " And T1.""UpdateDate""= CURRENT_DATE and T3.""USER_CODE"" ='" + sUsuario + "' "
+                              " And T1.""UpdateDate""= ADD_DAYS(CURRENT_DATE,-1) and T3.""USER_CODE"" ='" + sUsuario + "' "
 
 #End Region
                             sSQLAUTPDTE &= ") T ORDER BY T.""Tipo"""
