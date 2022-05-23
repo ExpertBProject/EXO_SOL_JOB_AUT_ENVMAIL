@@ -29,12 +29,6 @@
                 oLog.escribeMensaje("###################################################", EXO_Log.EXO_Log.Tipo.informacion)
                 Procesos.Actualizar_ViasPago(oLog)
             Else
-                oLog.escribeMensaje("Procedimiento. Enviar mails Autorizaciones pendientes", EXO_Log.EXO_Log.Tipo.informacion)
-                oLog.escribeMensaje("#######################################################", EXO_Log.EXO_Log.Tipo.informacion)
-                Procesos.EnviarMails(oLog)
-                oLog.escribeMensaje("#######################################################", EXO_Log.EXO_Log.Tipo.informacion)
-                oLog.escribeMensaje(" ", EXO_Log.EXO_Log.Tipo.informacion)
-
                 Dim sHora1 As String = Conexiones.Datos_Confi("STATAPROB", "HORA1")
                 Dim shora As String = Now.Hour.ToString("00") & ":" & Now.Minute.ToString("00")
                 If sHora1 = shora Then
@@ -44,6 +38,14 @@
                     oLog.escribeMensaje("#######################################################", EXO_Log.EXO_Log.Tipo.informacion)
                     oLog.escribeMensaje(" ", EXO_Log.EXO_Log.Tipo.informacion)
                 End If
+
+                oLog.escribeMensaje("Procedimiento. Enviar mails Autorizaciones pendientes", EXO_Log.EXO_Log.Tipo.informacion)
+                oLog.escribeMensaje("#######################################################", EXO_Log.EXO_Log.Tipo.informacion)
+                Procesos.EnviarMails(oLog)
+                oLog.escribeMensaje("#######################################################", EXO_Log.EXO_Log.Tipo.informacion)
+                oLog.escribeMensaje(" ", EXO_Log.EXO_Log.Tipo.informacion)
+
+
             End If
         Catch ex As Exception
             If ex.InnerException IsNot Nothing AndAlso ex.InnerException.Message <> "" Then

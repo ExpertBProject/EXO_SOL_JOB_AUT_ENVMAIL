@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Net
 Imports System.Text
 Imports System.Xml
 Imports EXO_DIAPI
@@ -570,7 +571,7 @@ Public Class Procesos
                     correo.Body = cuerpo
                     correo.IsBodyHtml = True
                     correo.Priority = System.Net.Mail.MailPriority.Normal
-
+                    System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
                     Dim smtp As New System.Net.Mail.SmtpClient
                     smtp.Host = sSMTP
                     smtp.Port = sPuerto
@@ -655,21 +656,21 @@ Public Class Procesos
 
                             sSQLAUTPDTE &= " select trim(substring(T5.""AliasName"", 0, 50)) ""BD"",  " +
                               " CASE WHEN T0.""ObjType"" = 22 then 'Pedido' else 'Factura' end ""Tipo"", " +
-                              " Case WHEN t0.""ProcesStat"" = 'Y' THEN 'Aprobado'  else 'Rechazado' end ""Estado"",  " +
+                              " Case WHEN t0.""ProcesStat"" = 'Y' THEN 'Aprobado'   else 'Rechazado' end ""Estado"",  " +
                                " t1.""Remarks"",   Case  When  T4.""DocTotalFC""<> 0 Then CAST((T4.""DocTotalFC"" - T4.""TotalExpFC"" - T4.""VatSumFC"") As Decimal(10,2)) " +
                                     " Else     CAST((T4.""DocTotal"" - T4.""TotalExpns"" - T4.""VatSum"") As Decimal(10,2)) " +
                                     " End ""Total Documento""," +
                                "  t4.""NumAtCard"" ""Referencia"",  t4.""CardName"", t4.""Project"",T4.""DocCur"" " +
                               " from """ + sBBDD + """.""OWDD"" t0  " +
-                                  " inner Join """ + sBBDD + """.""WDD1"" T1 On T0.""WddCode"" = T1.""WddCode"" And t0.""CurrStep"" = t1.""StepCode""  " +
+                                  " inner Join """ + sBBDD + """.""WDD1"" T1 On T0.""WddCode"" = T1.""WddCode"" And t0.""CurrStep"" = t1.""StepCode"" AND T1.""Status""<>'W' " +
                                   " inner join """ + sBBDD + """.""OWST"" T2 On T1.""StepCode"" = t2.""WstCode""  " +
                                 "  inner Join """ + sBBDD + """.""OUSR"" T3 On T0.""UserSign"" = t3.""USERID""  " +
                                   " inner join """ + sBBDD + """.""ODRF"" T4 On T0.""DraftEntry"" = t4.""DocEntry"" " +
                                 "  inner Join """ + sBBDD + """.""OUDP"" T6 On T3.""Department"" = T6.""Code""  , " +
                                 "             """ + sBBDD + """.""OADM"" T5 " +
-                              " WHERE((t0.""Status"" = 'N' ) or(t0.""Status"" = 'Y' AND t0.""ProcesStat"" = 'Y'))   " +
-                              " And T1.""UpdateDate""= ADD_DAYS(CURRENT_DATE,-1) and T3.""USER_CODE"" ='" + sUsuario + "' "
-
+                              " WHERE((t0.""Status"" = 'N' and t0.""ProcesStat"" <> 'C') or (t0.""Status"" = 'Y' AND t0.""ProcesStat"" = 'Y'))   " +
+                              "  and T3.""USER_CODE"" ='" + sUsuario + "' "
+                            'And T1.""UpdateDate""= ADD_DAYS(CURRENT_DATE,-1)
 #End Region
                             sSQLAUTPDTE &= ") T ORDER BY T.""Tipo"""
 
@@ -809,7 +810,7 @@ Public Class Procesos
                     correo.Body = cuerpo
                     correo.IsBodyHtml = True
                     correo.Priority = System.Net.Mail.MailPriority.Normal
-
+                    System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
                     Dim smtp As New System.Net.Mail.SmtpClient
                     smtp.Host = sSMTP
                     smtp.Port = sPuerto
