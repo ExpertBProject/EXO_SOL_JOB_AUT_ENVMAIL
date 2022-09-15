@@ -96,20 +96,20 @@
   <ItemGroup>
     <Reference Include="EXO_DIAPI, Version=9.1.0.43, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Cliente\9.1.0.43\x64\EXO_DIAPI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Cliente\9.1.1.0\x64\desarrollo\EXO_DIAPI.dll</HintPath>
     </Reference>
     <Reference Include="EXO_Log, Version=9.1.0.43, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Cliente\9.1.0.43\x64\EXO_Log.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Cliente\9.1.1.0\x64\desarrollo\EXO_Log.dll</HintPath>
     </Reference>
     <Reference Include="EXO_SQLIndependiente, Version=9.1.0.43, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Cliente\9.1.0.43\x64\EXO_SQLIndependiente.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Cliente\9.1.1.0\x64\desarrollo\EXO_SQLIndependiente.dll</HintPath>
     </Reference>
     <Reference Include="Interop.SAPbobsCOM, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\..\..\Cliente\9.1.0.43\x64\Interop.SAPbobsCOM.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Cliente\9.1.1.0\x64\desarrollo\Interop.SAPbobsCOM.dll</HintPath>
     </Reference>
     <Reference Include="Sap.Data.Hana.v4.5, Version=1.0.120.0, Culture=neutral, PublicKeyToken=0326b8ea63db4bc4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conexiones.vb" />
+    <Compile Include="EXO_FUNCIONES.vb" />
     <Compile Include="JOB.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -193,6 +194,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SQL\ANADIR_EMAILCC_SOL_AUTORIZ_EXO_CREADORES.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

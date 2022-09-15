@@ -159,6 +159,7 @@ Public Class Procesos
         Dim refDI As EXO_DIAPI.EXO_DIAPI = Nothing
         Dim oXML As String = ""
         Dim sDir As String = Application.StartupPath
+        Dim bResultado As Boolean = False
         Try
             sPass = Conexiones.Datos_Confi("DI", "Password")
             Dim tipoServidor As SAPbobsCOM.BoDataServerTypes = SAPbobsCOM.BoDataServerTypes.dst_HANADB
@@ -191,6 +192,14 @@ Public Class Procesos
                     oXML = xmldoc.InnerXml.ToString
                     refDI.comunes.LoadBDFromXML(oXML, sError)
                     oLog.escribeMensaje("Validado: UDFs_EXO_OVPM - " & sError, EXO_Log.EXO_Log.Tipo.advertencia)
+
+                    sSQL = EXO_FUNCIONES.LeerEmbebido("EXO_SOL_JOB_AUT_ENVMAIL.ANADIR_EMAILCC_SOL_AUTORIZ_EXO_CREADORES.sql")
+                    bResultado = Conexiones.ExecuteSqlDB(oDBSAP, sSQL)
+                    Select Case bResultado
+                        Case True : oLog.escribeMensaje("Creado campo EXO_MAILCC en ""SOL_AUTORIZ"".""EXO_CREADORES""", EXO_Log.EXO_Log.Tipo.advertencia)
+                        Case Else : oLog.escribeMensaje("No se ha podido Crear campo EXO_MAILCC en ""SOL_AUTORIZ"".""EXO_CREADORES""", EXO_Log.EXO_Log.Tipo.advertencia)
+                    End Select
+
 #End Region
                     Conexiones.Disconnect_Company(oCompany)
                 Next
@@ -390,7 +399,7 @@ Public Class Procesos
         Dim sError As String = ""
         Dim sEmpresa As String = ""
         Dim sHora1 As String = "" : Dim SHora2 As String = "" : Dim EsUrgente As Boolean = False
-        Dim sMailFROM As String = "" : Dim sDirmail As String = "" : Dim cuerpo As String = ""
+        Dim sMailFROM As String = "" : Dim sDirmail As String = "" : Dim sDirmailCC As String = "" : Dim cuerpo As String = ""
         Dim sSMTP As String = "" : Dim sPuerto As String = "" : Dim sUsMail As String = "" : Dim sPSSMail As String = ""
         Dim sDoc As String = "" : Dim sTipo As String = "" : Dim sBBDD As String = "" : Dim sUrgente As String = "" : Dim stabla As String = ""
         Dim bExAut As Boolean = False
@@ -707,7 +716,7 @@ Public Class Procesos
         Dim sError As String = ""
         Dim sEmpresa As String = ""
         Dim sHora1 As String = "" : Dim SHora2 As String = "" : Dim EsUrgente As Boolean = False
-        Dim sMailFROM As String = "" : Dim sDirmail As String = "" : Dim cuerpo As String = ""
+        Dim sMailFROM As String = "" : Dim sDirmail As String = "" : Dim sDirmailCC As String = "" : Dim cuerpo As String = ""
         Dim sSMTP As String = "" : Dim sPuerto As String = "" : Dim sUsMail As String = "" : Dim sPSSMail As String = ""
         Dim sDoc As String = "" : Dim sTipo As String = "" : Dim sBBDD As String = "" : Dim sUrgente As String = "" : Dim stabla As String = ""
         Dim bExAut As Boolean = False
@@ -730,9 +739,13 @@ Public Class Procesos
                 correo.From = New System.Net.Mail.MailAddress(sMailFROM, "Envío Aut. Autorizaciones Pdtes.")
                 correo.To.Clear()
                 sDirmail = Conexiones.GetValueDB(oDBSAP, """SOL_AUTORIZ"".""EXO_CREADORES""", """EXO_MAIL""", """EXO_USUARIO""='" & sUsuario & "' ")
+                sDirmailCC = Conexiones.GetValueDB(oDBSAP, """SOL_AUTORIZ"".""EXO_CREADORES""", """EXO_MAILCC""", """EXO_USUARIO""='" & sUsuario & "' ")
 
                 If sDirmail <> "" Then
                     correo.To.Add(sDirmail)
+                    If sDirmailCC.Trim <> "" Then
+                        correo.To.Add(sDirmailCC)
+                    End If
 
                     Dim strHeader As String = "<table><tbody>"
                     Dim strFooter As String = "</tbody></table>"

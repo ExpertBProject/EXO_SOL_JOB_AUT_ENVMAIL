@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0"?>
 <Connection>
-  <ACTUALIZAR VIASPAGO="N"   CAMPOS="N"/>
+  <ACTUALIZAR VIASPAGO="N"   CAMPOS="Y"/>
  
   <HANA Server="xper-test01:30015" DbUser="B1SQLUSER" DbPwd="12eXo$18" databaseName="SOL_AUTORIZ" providerName="Sap.Data.Hana"/>
   <DI Server="xper-test01:30015" LicenseServer="xper-test01:40000" CompanyDB="SOL_AUTORIZ" UserName="mperiz" Password="M@rt1nN1c0" DbUserName="B1SQLUSER" DbPassword="12eXo$18"/>
