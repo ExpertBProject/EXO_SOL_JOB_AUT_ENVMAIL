@@ -279,7 +279,61 @@ Public Class Procesos
                                 " inner Join """ + sBBDD + """.""OCRD"" T8 ON T7.""CardCode""=T8.""CardCode"" " +
                                 " Left join """ + sBBDD + """.""OUSR"" T10 On T10.""USERID""=T9.""UserID"" " +
                                 " ,   """ + sBBDD + """.""OADM"" T11 " +
-                                " where T10.""USER_CODE"" ='" + sUsuario + "' AND T0.""ObjType"" in (18,22) AND T0.""ProcesStat"" ='W' and t9.""U_EXO_AMailE""='N'"
+                                " where COALESCE(T0.""DocEntry"", 0)= 0  and T10.""USER_CODE"" ='" + sUsuario + "' AND T0.""ObjType"" in (18,22) AND T0.""ProcesStat"" ='W' and t9.""U_EXO_AMailE""='N'"
+
+                            sSQLAUTPDTE &= " UNION ALL "
+
+                              sSQLAUTPDTE &= " Select '" + sBBDD + "' ""BD"", T11.""CompnyName"" ""BDName"",T0.""WddCode"",t0.""ProcesStat"" ""Status"", T8.""CardName""," +
+                                "  T7.""DocEntry"" ""DocInterno"", " +
+                                " CAST(T7.""NumAtCard"" as VARCHAR) ""DocNum"",T0.""ObjType"",  " +
+                                " T0.""CreateDate"",T0.""CreateTime"", " +
+                                " case  when  T7.""DocTotalFC""<> 0 then CAST((T7.""DocTotalFC"" - T7.""TotalExpFC"" - T7.""VatSumFC"") as decimal(10,2)) " +
+                                    " else     CAST((T7.""DocTotal"" - T7.""TotalExpns"" - T7.""VatSum"") as decimal(10,2)) " +
+                                    " end ""DocTotal""," +
+                                " t6.""Name"" ""Departamento"",T0.""Remarks"",T0.""MaxReqr"", " +
+                                " T10.""USER_CODE"" ""Aprobador"",T9.""Remarks"" ""ComAprobador"",T9.""Status"" ""StatusAprob"", " +
+                                " T0.""IsDraft"" ""borrador"",T7.""DocCur"",T7.""DocRate"",T7.""Project"" ""Proyecto"" " +
+                                 " from """ + sBBDD + """.""OWDD"" T0  " +
+                                "   inner Join """ + sBBDD + """.""WDD1"" T9 On T0.""WddCode""=T9.""WddCode""  And T0.""CurrStep""=T9.""StepCode"" " +
+                                " inner Join """ + sBBDD + """.""OUSR"" T1 on T0.""OwnerID""=T1.""USERID""  " +
+                                " inner Join """ + sBBDD + """.""WTM2"" T2 ON T0.""WtmCode""=T2.""WtmCode"" And T9.""SortId""=T2.""SortId""  " +
+                                " inner Join """ + sBBDD + """.""WST1"" T3 ON T2.""WstCode""=T3.""WstCode"" " +
+                                " inner Join """ + sBBDD + """.""OWST"" T4 ON T2.""WstCode""=T4.""WstCode"" " +
+                                " inner Join """ + sBBDD + """.""OUSR"" T5 ON T3.""UserID""=T5.""USERID"" " +
+                                " Left Join """ + sBBDD + """.""OUDP"" T6 ON T6.""Code""=t1.""Department""  " +
+                                "  inner join """ + sBBDD + """.""OPOR"" T7 ON T0.""DocEntry""=T7.""DocEntry"" and T0.""ObjType"" =22 " +
+                                " inner Join """ + sBBDD + """.""OCRD"" T8 ON T7.""CardCode""=T8.""CardCode"" " +
+                                " Left join """ + sBBDD + """.""OUSR"" T10 On T10.""USERID""=T9.""UserID"" " +
+                                " ,   """ + sBBDD + """.""OADM"" T11 " +
+                                " where COALESCE(T0.""DocEntry"", 0)<> 0    and T10.""USER_CODE"" ='" + sUsuario + "' AND T0.""ProcesStat"" ='W' and t9.""U_EXO_AMailE""='N'"
+
+
+                            sSQLAUTPDTE &= " UNION ALL "
+
+                               sSQLAUTPDTE &= " Select '" + sBBDD + "' ""BD"", T11.""CompnyName"" ""BDName"",T0.""WddCode"",t0.""ProcesStat"" ""Status"", T8.""CardName""," +
+                                "  T7.""DocEntry"" ""DocInterno"", " +
+                                " CAST(T7.""NumAtCard"" as VARCHAR) ""DocNum"",T0.""ObjType"",  " +
+                                " T0.""CreateDate"",T0.""CreateTime"", " +
+                                " case  when  T7.""DocTotalFC""<> 0 then CAST((T7.""DocTotalFC"" - T7.""TotalExpFC"" - T7.""VatSumFC"") as decimal(10,2)) " +
+                                    " else     CAST((T7.""DocTotal"" - T7.""TotalExpns"" - T7.""VatSum"") as decimal(10,2)) " +
+                                    " end ""DocTotal""," +
+                                " t6.""Name"" ""Departamento"",T0.""Remarks"",T0.""MaxReqr"", " +
+                                " T10.""USER_CODE"" ""Aprobador"",T9.""Remarks"" ""ComAprobador"",T9.""Status"" ""StatusAprob"", " +
+                                " T0.""IsDraft"" ""borrador"",T7.""DocCur"",T7.""DocRate"",T7.""Project"" ""Proyecto"" " +
+                                 " from """ + sBBDD + """.""OWDD"" T0  " +
+                                "   inner Join """ + sBBDD + """.""WDD1"" T9 On T0.""WddCode""=T9.""WddCode""  And T0.""CurrStep""=T9.""StepCode"" " +
+                                " inner Join """ + sBBDD + """.""OUSR"" T1 on T0.""OwnerID""=T1.""USERID""  " +
+                                " inner Join """ + sBBDD + """.""WTM2"" T2 ON T0.""WtmCode""=T2.""WtmCode"" And T9.""SortId""=T2.""SortId""  " +
+                                " inner Join """ + sBBDD + """.""WST1"" T3 ON T2.""WstCode""=T3.""WstCode"" " +
+                                " inner Join """ + sBBDD + """.""OWST"" T4 ON T2.""WstCode""=T4.""WstCode"" " +
+                                " inner Join """ + sBBDD + """.""OUSR"" T5 ON T3.""UserID""=T5.""USERID"" " +
+                                " Left Join """ + sBBDD + """.""OUDP"" T6 ON T6.""Code""=t1.""Department""  " +
+                                "  inner join """ + sBBDD + """.""OPCH"" T7 ON T0.""DocEntry""=T7.""DocEntry"" and T0.""ObjType"" =18 " +
+                                " inner Join """ + sBBDD + """.""OCRD"" T8 ON T7.""CardCode""=T8.""CardCode"" " +
+                                " Left join """ + sBBDD + """.""OUSR"" T10 On T10.""USERID""=T9.""UserID"" " +
+                                " ,   """ + sBBDD + """.""OADM"" T11 " +
+                                " where COALESCE(T0.""DocEntry"", 0)<> 0    and T10.""USER_CODE"" ='" + sUsuario + "' AND T0.""ProcesStat"" ='W' and t9.""U_EXO_AMailE""='N'"
+
 
                             'sSQLAUTPDTE &= " UNION ALL "
                             'sSQLAUTPDTE &= " Select '" + sBBDD + "' ""BD"", T11.""CompnyName"" ""BDName"",T0.""WddCode"",t0.""ProcesStat"" ""Status"", T8.""CardName""," +
@@ -303,7 +357,37 @@ Public Class Procesos
                             '    " Left join """ + sBBDD + """.""OUSR"" T10 On T10.""USERID""=T9.""UserID"" " +
                             '    " ,   """ + sBBDD + """.""OADM"" T11 " +
                             '    " where T10.""USER_CODE"" ='" + sUsuario + "' AND T0.""ObjType"" in (46) AND T0.""ProcesStat"" ='W' and t9.""U_EXO_AMailE""='N'"
+
+
+
                             sSQLAUTPDTE &= ") "
+
+#Region "query original"
+                            'sSQLAUTPDTE &= " Select '" + sBBDD + "' ""BD"", T11.""CompnyName"" ""BDName"",T0.""WddCode"",t0.""ProcesStat"" ""Status"", T8.""CardName""," +
+                            '  " CASE WHEN T0.""IsDraft""='Y' THEN T0.""DraftEntry"" ELSE T7.""DocEntry"" END ""DocInterno"", " +
+                            '  " CAST(T7.""NumAtCard"" as VARCHAR) ""DocNum"",T0.""ObjType"",  " +
+                            '  " T0.""CreateDate"",T0.""CreateTime"", " +
+                            '  " case  when  T7.""DocTotalFC""<> 0 then CAST((T7.""DocTotalFC"" - T7.""TotalExpFC"" - T7.""VatSumFC"") as decimal(10,2)) " +
+                            '      " else     CAST((T7.""DocTotal"" - T7.""TotalExpns"" - T7.""VatSum"") as decimal(10,2)) " +
+                            '      " end ""DocTotal""," +
+                            '  " t6.""Name"" ""Departamento"",T0.""Remarks"",T0.""MaxReqr"", " +
+                            '  " T10.""USER_CODE"" ""Aprobador"",T9.""Remarks"" ""ComAprobador"",T9.""Status"" ""StatusAprob"", " +
+                            '  " T0.""IsDraft"" ""borrador"",T7.""DocCur"",T7.""DocRate"",T7.""Project"" ""Proyecto"" " +
+                            '   " from """ + sBBDD + """.""OWDD"" T0  " +
+                            '  "   inner Join """ + sBBDD + """.""WDD1"" T9 On T0.""WddCode""=T9.""WddCode""  And T0.""CurrStep""=T9.""StepCode"" " +
+                            '  " inner Join """ + sBBDD + """.""OUSR"" T1 on T0.""OwnerID""=T1.""USERID""  " +
+                            '  " inner Join """ + sBBDD + """.""WTM2"" T2 ON T0.""WtmCode""=T2.""WtmCode"" And T9.""SortId""=T2.""SortId""  " +
+                            '  " inner Join """ + sBBDD + """.""WST1"" T3 ON T2.""WstCode""=T3.""WstCode"" " +
+                            '  " inner Join """ + sBBDD + """.""OWST"" T4 ON T2.""WstCode""=T4.""WstCode"" " +
+                            '  " inner Join """ + sBBDD + """.""OUSR"" T5 ON T3.""UserID""=T5.""USERID"" " +
+                            '  " Left Join """ + sBBDD + """.""OUDP"" T6 ON T6.""Code""=t1.""Department""  " +
+                            '  "  inner join """ + sBBDD + """.""ODRF"" T7 ON T0.""DraftEntry""=T7.""DocEntry"" " +
+                            '  " inner Join """ + sBBDD + """.""OCRD"" T8 ON T7.""CardCode""=T8.""CardCode"" " +
+                            '  " Left join """ + sBBDD + """.""OUSR"" T10 On T10.""USERID""=T9.""UserID"" " +
+                            '  " ,   """ + sBBDD + """.""OADM"" T11 " +
+                            '  " where T10.""USER_CODE"" ='" + sUsuario + "' AND T0.""ObjType"" in (18,22) AND T0.""ProcesStat"" ='W' and t9.""U_EXO_AMailE""='N'"
+#End Region
+
                             'añadir las autorizaciones de pago por desarrollo
                             'que valpag=1 y enviadomail1 =n y validador1=n
                             'que valpag=2 y enviadomail2=n, validador1=Y, validador2=n y (status=O o que sum(doctotal)>3000)
