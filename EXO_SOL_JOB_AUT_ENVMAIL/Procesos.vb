@@ -219,7 +219,7 @@ Public Class Procesos
 #End Region
 
 #Region "Enviar Mails Autorizaciones pendientes"
-    Public Shared Sub EnviarMails(ByRef oLog As EXO_Log.EXO_Log)
+    Public Shared Sub EnviarMails(ByRef oLog As EXO_Log.EXO_Log, sHoraEjecucion As String)
 #Region "Variables"
         Dim oDBSAP As HanaConnection = Nothing
         Dim sError As String = ""
@@ -283,7 +283,7 @@ Public Class Procesos
 
                             sSQLAUTPDTE &= " UNION ALL "
 
-                              sSQLAUTPDTE &= " Select '" + sBBDD + "' ""BD"", T11.""CompnyName"" ""BDName"",T0.""WddCode"",t0.""ProcesStat"" ""Status"", T8.""CardName""," +
+                            sSQLAUTPDTE &= " Select '" + sBBDD + "' ""BD"", T11.""CompnyName"" ""BDName"",T0.""WddCode"",t0.""ProcesStat"" ""Status"", T8.""CardName""," +
                                 "  T7.""DocEntry"" ""DocInterno"", " +
                                 " CAST(T7.""NumAtCard"" as VARCHAR) ""DocNum"",T0.""ObjType"",  " +
                                 " T0.""CreateDate"",T0.""CreateTime"", " +
@@ -310,7 +310,7 @@ Public Class Procesos
 
                             sSQLAUTPDTE &= " UNION ALL "
 
-                               sSQLAUTPDTE &= " Select '" + sBBDD + "' ""BD"", T11.""CompnyName"" ""BDName"",T0.""WddCode"",t0.""ProcesStat"" ""Status"", T8.""CardName""," +
+                            sSQLAUTPDTE &= " Select '" + sBBDD + "' ""BD"", T11.""CompnyName"" ""BDName"",T0.""WddCode"",t0.""ProcesStat"" ""Status"", T8.""CardName""," +
                                 "  T7.""DocEntry"" ""DocInterno"", " +
                                 " CAST(T7.""NumAtCard"" as VARCHAR) ""DocNum"",T0.""ObjType"",  " +
                                 " T0.""CreateDate"",T0.""CreateTime"", " +
@@ -433,10 +433,12 @@ Public Class Procesos
                             sSQLAUTPDTE &= " ""Departamento"",""Remarks"",""MaxReqr"",  ""Aprobador"",""ComAprobador"",""StatusAprob"",   ""borrador"",""DocCur"",""DocRate"",""Proyecto""    "
                             sSQLAUTPDTE &= " ORDER BY   t.""ObjType"", t.""BD"", t.""DocNum"" "
 
+                            ' oLog.escribeMensaje(sSQLAUTPDTE)
+
                             Conexiones.FillDtDB(oDBSAP, odtDatos2, sSQLAUTPDTE)
                         Next
                         sSQLAct = ""
-                        Procesos.EnviarMails_Aut_Pdtes(oLog, odtDatos2, sUsuario, sSQLAct, oDBSAP)
+                        Procesos.EnviarMails_Aut_Pdtes(oLog, odtDatos2, sUsuario, sSQLAct, oDBSAP, sHoraEjecucion)
 #Region "Actualiza documentos"
                         'Actualizamos documentos
                         If sSQLAct <> "" Then
@@ -478,7 +480,7 @@ Public Class Procesos
             odtDatos = Nothing : odtUsuarios = Nothing
         End Try
     End Sub
-    Public Shared Sub EnviarMails_Aut_Pdtes(ByRef oLog As EXO_Log.EXO_Log, ByRef odtDatos As System.Data.DataTable, ByVal sUsuario As String, ByRef sSQLAct As String, ByRef oDBSAP As HanaConnection)
+    Public Shared Sub EnviarMails_Aut_Pdtes(ByRef oLog As EXO_Log.EXO_Log, ByRef odtDatos As System.Data.DataTable, ByVal sUsuario As String, ByRef sSQLAct As String, ByRef oDBSAP As HanaConnection, sHoraEjecucion As String)
 #Region "Variables"
         Dim sError As String = ""
         Dim sEmpresa As String = ""
@@ -495,7 +497,7 @@ Public Class Procesos
             If odtDatos.Rows.Count > 0 Then
                 oLog.escribeMensaje("Existen autorizaciones pdtes de enviar del usuario " & sUsuario & ". ", EXO_Log.EXO_Log.Tipo.advertencia)
                 sHora1 = Conexiones.Datos_Confi("NO_URGE", "HORA1") : SHora2 = Conexiones.Datos_Confi("NO_URGE", "HORA2")
-                Dim shora As String = Now.Hour.ToString("00") & ":" & Now.Minute.ToString("00")
+                'Dim shora As String = Now.Hour.ToString("00") & ":" & Now.Minute.ToString("00")
                 sMailFROM = Conexiones.Datos_Confi("MAIL", "MAILFROM")
                 sSMTP = Conexiones.Datos_Confi("MAIL", "SMTP") : sPuerto = Conexiones.Datos_Confi("MAIL", "PUERTO")
                 sUsMail = Conexiones.Datos_Confi("MAIL", "USUARIO") : sPSSMail = Conexiones.Datos_Confi("MAIL", "PASS")
@@ -503,8 +505,8 @@ Public Class Procesos
                 oLog.escribeMensaje("Empresa: " & sEmpresa, EXO_Log.EXO_Log.Tipo.advertencia)
                 Dim correo As New System.Net.Mail.MailMessage()
                 'Comprobamos si estamos en tiempo de urgencia
-                oLog.escribeMensaje("HORA1: " & shora & "=" & sHora1 & "--- HORA 2:" & shora & "=" & SHora2, EXO_Log.EXO_Log.Tipo.advertencia)
-                If shora = sHora1 Or shora = SHora2 Then
+                oLog.escribeMensaje("HORA1: " & sHoraEjecucion & "=" & sHora1 & "--- HORA2: " & sHoraEjecucion & "=" & SHora2, EXO_Log.EXO_Log.Tipo.advertencia)
+                If sHoraEjecucion = sHora1 Or sHoraEjecucion = SHora2 Then
                     EsUrgente = False
                     correo.Priority = System.Net.Mail.MailPriority.Normal 'Prioridad
                     oLog.escribeMensaje("Hora No Urgente...", EXO_Log.EXO_Log.Tipo.advertencia)
@@ -762,7 +764,7 @@ Public Class Procesos
                                 "  inner Join """ + sBBDD + """.""OUDP"" T6 On T3.""Department"" = T6.""Code""  , " +
                                 "             """ + sBBDD + """.""OADM"" T5 " +
                               " WHERE((t0.""Status"" = 'N' and t0.""ProcesStat"" <> 'C') or (t0.""Status"" = 'Y' AND t0.""ProcesStat"" = 'Y'))   " +
-                              "  and T3.""USER_CODE"" ='" + sUsuario + "' "
+                              "  and T3.""USER_CODE""  like '%" + sUsuario + "' "
                             'And T1.""UpdateDate""= ADD_DAYS(CURRENT_DATE,-1)
 #End Region
                             sSQLAUTPDTE &= ") T ORDER BY T.""Tipo"""
@@ -828,7 +830,7 @@ Public Class Procesos
                 If sDirmail <> "" Then
                     correo.To.Add(sDirmail)
                     If sDirmailCC.Trim <> "" Then
-                        correo.To.Add(sDirmailCC)
+                        correo.CC.Add(sDirmailCC)
                     End If
 
                     Dim strHeader As String = "<table><tbody>"
@@ -920,7 +922,7 @@ Public Class Procesos
                         If bExAut = True Then
                             'If sDirmail = "mperiz@expertone.es" Then
                             smtp.Send(correo)
-                            oLog.escribeMensaje(sEmpresa & "- Correo enviado: " & sDirmail, EXO_Log.EXO_Log.Tipo.informacion)
+                            oLog.escribeMensaje(sEmpresa & "- Correo enviado: " & sDirmail & " " & sDirmailCC, EXO_Log.EXO_Log.Tipo.informacion)
                             oLog.escribeMensaje(sTextoEnviado, EXO_Log.EXO_Log.Tipo.informacion)
                             'End If
                         Else

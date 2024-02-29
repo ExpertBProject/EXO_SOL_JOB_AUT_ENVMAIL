@@ -30,8 +30,8 @@
                 Procesos.Actualizar_ViasPago(oLog)
             Else
                 Dim sHora1 As String = Conexiones.Datos_Confi("STATAPROB", "HORA1")
-                Dim shora As String = Now.Hour.ToString("00") & ":" & Now.Minute.ToString("00")
-                If sHora1 = shora Then
+                Dim sHoraEjecucion As String = Now.Hour.ToString("00") & ":" & Now.Minute.ToString("00")
+                If sHora1 = sHoraEjecucion Then
                     oLog.escribeMensaje("Procedimiento. Enviar mails status aprobados y rechazados", EXO_Log.EXO_Log.Tipo.informacion)
                     oLog.escribeMensaje("#######################################################", EXO_Log.EXO_Log.Tipo.informacion)
                     Procesos.EnviarMails_statusaprob(oLog)
@@ -41,7 +41,7 @@
 
                 oLog.escribeMensaje("Procedimiento. Enviar mails Autorizaciones pendientes", EXO_Log.EXO_Log.Tipo.informacion)
                 oLog.escribeMensaje("#######################################################", EXO_Log.EXO_Log.Tipo.informacion)
-                Procesos.EnviarMails(oLog)
+                Procesos.EnviarMails(oLog, sHoraEjecucion)
                 oLog.escribeMensaje("#######################################################", EXO_Log.EXO_Log.Tipo.informacion)
                 oLog.escribeMensaje(" ", EXO_Log.EXO_Log.Tipo.informacion)
 
